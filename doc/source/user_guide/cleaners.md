@@ -60,8 +60,6 @@ The cleaning process usually returns two objects:
 - `cleaning_pipeline`: the fitted cleaning pipeline, including intermediate cleaning artifacts.
 - `cleaned_dataset`: the standardized cleaned dataset that can be saved and used for downstream analysis.
 
-
-
 ---
 
 ## Supported Datasets
@@ -84,7 +82,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare data
-    file_path = download_human_domainome_source_file("raw_dataset/Human_Domainome_Dataset")
+    download_human_domainome_source_file("raw_dataset/Human_Domainome_Dataset")
     
     # File settings
     dataset_file_path = Path("raw_dataset/Human_Domainome_Dataset/SupplementaryTable2.txt")
@@ -141,7 +139,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare data
-    file_path = download_proteingym_source_file("raw_dataset/ProteinGym_DMS_Substitutions_Dataset")
+    download_proteingym_source_file("raw_dataset/ProteinGym_DMS_Substitutions_Dataset")
     
     # File settings
     dataset_file_path = Path("raw_dataset/ProteinGym_DMS_Substitutions_Dataset/ProteinGym_DMS_substitutions.zip")
@@ -200,7 +198,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare dataset
-    file_path = download_cdna_proteolysis_source_file("raw_dataset/cDNA_Proteolysis_Dataset")
+    download_cdna_proteolysis_source_file("raw_dataset/cDNA_Proteolysis_Dataset")
 
     # File settings
     dataset_file_path = Path("raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv")
@@ -315,7 +313,7 @@ from mutcleaner.cleaners import (
 def main():
     # Prepare data
     raw_data_dir = Path("raw_dataset/ddG_dTm_Dataset")
-    file_paths = download_ddg_dtm_source_file(raw_data_dir)
+    download_ddg_dtm_source_file(raw_data_dir)
 
     # File settings
     for dataset_file_path in sorted(raw_data_dir.glob("*.csv")):
@@ -375,7 +373,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare dataset
-    file_path = download_archstabms1e10_source_file("raw_dataset/ArchStabMS1E10_Epistasis_Dataset")
+    download_archstabms1e10_source_file("raw_dataset/ArchStabMS1E10_Epistasis_Dataset")
 
     # File settings
     dataset_file_path = Path("raw_dataset/ArchStabMS1E10_Epistasis_Dataset/ArchStabMS1E10_Epistasis_Dataset.csv")
@@ -432,7 +430,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare dataset
-    file_path = download_antitoxin_pard3_source_file("raw_dataset/Antitoxin_ParD3_Epistasis_Dataset")
+    download_antitoxin_pard3_source_file("raw_dataset/Antitoxin_ParD3_Epistasis_Dataset")
     
     # File settings
     dataset_file_path = Path("raw_dataset/Antitoxin_ParD3_Epistasis_Dataset/Antitoxin_ParD3_Epistasis_Dataset.csv")
@@ -490,7 +488,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare data
-    file_path = download_trpb_source_file("raw_dataset/TrpB_Epistasis_Dataset")
+    download_trpb_source_file("raw_dataset/TrpB_Epistasis_Dataset")
     
     # File settings
     dataset_file_path = Path("raw_dataset/TrpB_Epistasis_Dataset/TrpB_Epistasis_Dataset.csv")
@@ -548,7 +546,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare data
-    file_path = download_human_myoglobin_source_file("raw_dataset/Human_Myoglobin_Epistasis_Dataset")
+    download_human_myoglobin_source_file("raw_dataset/Human_Myoglobin_Epistasis_Dataset")
     
     # File settings
     dataset_file_path = Path("raw_dataset/Human_Myoglobin_Epistasis_Dataset/Human_Myoglobin_Epistasis_Dataset.csv")
@@ -606,7 +604,7 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare data
-    file_paths = download_ctxm_source_file("raw_dataset/CTXM_Epistasis_Dataset")
+    download_ctxm_source_file("raw_dataset/CTXM_Epistasis_Dataset")
 
     # File settings
     dataset_file_path = Path("raw_dataset/CTXM_Epistasis_Dataset/CTXM_Ampicillin_Epistasis_Dataset.csv")
@@ -700,14 +698,14 @@ See {py:class}`mutcleaner.cleaners.CTXMCleanerConfig` for details.
 You can download the source file directly by running (see {py:func}`mutcleaner.utils.download_rbd_ace2_source_file` for details):
 ```python
 from mutcleaner import download_rbd_ace2_source_file
-file_paths = download_rbd_ace2_source_file("path/to/target/folder")
+download_rbd_ace2_source_file("path/to/target/folder")
 ```
 
 You can also download and process a specific sub-dataset:
 
 ```python
 from mutcleaner import download_rbd_ace2_source_file
-file_paths = download_rbd_ace2_source_file(
+download_rbd_ace2_source_file(
     "path/to/target/folder",
     sub_dataset="Omicron_EG5_FLip_BA286",
 )

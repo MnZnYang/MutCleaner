@@ -50,6 +50,22 @@ To install development dependencies for testing and documentation:
 pip install -e ".[dev]"
 ```
 
+## Package Structure
+```text
+mutcleaner/
+├── cleaners/
+├── core/
+│   ├── alphabet.py
+│   ├── codon.py
+│   ├── constants.py
+│   ├── dataset.py
+│   ├── mutation.py
+│   ├── pipeline.py
+│   ├── sequence.py
+│   └── types.py
+└── utils/
+```
+
 ## Quick Start
 
 See the [Data Cleaners Usage Guide](https://xulab-research.github.io/MutCleaner/user_guide/cleaners.html) for more examples.
@@ -78,42 +94,45 @@ See the [Data Cleaners Usage Guide](https://xulab-research.github.io/MutCleaner/
 Here's a complete example demonstrating MutCleaner's capabilities with the cDNA Proteolysis mutation dataset:
 
 ```python
-from mutcleaner import cdna_proteolysis_cleaner
+# ddg as label
+import pickle
+from pathlib import Path
 from mutcleaner import download_cdna_proteolysis_source_file
-
-# Create a cDNA Proteolysis cleaning pipeline using MutCleaner's default pipeline.
-cdna_proteolysis_filepath = download_cdna_proteolysis_source_file(
-    "dir_path",
-    "file_name",
-)["filename"]
-
-cdna_proteolysis_cleaning_pipeline = cdna_proteolysis_cleaner.create_cdna_proteolysis_cleaner(
-    cdna_proteolysis_filepath,
+from mutcleaner.cleaners import (
+    create_cdna_proteolysis_cleaner,
+    clean_cdna_proteolysis_dataset,
 )
 
-# Clean and process the dataset.
-cdna_proteolysis_cleaning_pipeline, cdna_proteolysis_dataset = (
-    cdna_proteolysis_cleaner.clean_cdna_proteolysis_dataset(
-        cdna_proteolysis_cleaning_pipeline,
-    )
+# Prepare dataset
+download_cdna_proteolysis_source_file("raw_dataset/cDNA_Proteolysis_Dataset")
+
+# File settings
+dataset_filepath = Path("raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv")
+artifact_path = Path("logs/cDNA_Proteolysis_ddG_Dataset/artifacts.pkl")
+artifact_csv_dir = Path("logs/cDNA_Proteolysis_ddG_Dataset")
+
+artifact_csv_dir.mkdir(parents=True, exist_ok=True)
+
+# Clean data
+cdna_cleaning_pipeline = create_cdna_proteolysis_cleaner(dataset_filepath)
+cdna_cleaning_pipeline, cdna_dataset = clean_cdna_proteolysis_dataset(
+    cdna_cleaning_pipeline
 )
 
-# Save the processed dataset.
-cdna_proteolysis_dataset.save("output/cleaned_cdna_proteolysis_data")
+# Save data
+cdna_dataset.save("cleaned_dataset/cleaned_cDNA_Proteolysis_ddG_Dataset")
+cdna_cleaning_pipeline.save_artifacts(artifact_path)
+
+# open the pickle file
+with open(artifact_path, "rb") as file:
+    artifacts = pickle.load(file)
+
+for artifact_name, artifact_df in artifacts.items():
+    artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+
 ```
 
-### Basic Sequence Operations
 
-```python
-from mutcleaner.core.sequence import DNASequence
-
-# DNA sequence analysis.
-dna = DNASequence("ATGCGATCGTAA")
-
-print(f"Reverse complement: {dna.reverse_complement()}")
-print(f"Transcription: {dna.transcribe()}")
-print(f"Translation: {dna.translate()}")
-```
 
 ## Core Features
 
@@ -143,88 +162,6 @@ print(f"Translation: {dna.translate()}")
 
 ## Examples and Use Cases
 
-### Custom Processing Pipeline
-
-```python
-import pandas as pd
-
-from mutcleaner.cleaners.basic_cleaners import (
-    extract_and_rename_columns,
-    filter_and_clean_data,
-    convert_data_types,
-    validate_mutations,
-    convert_to_mutation_dataset_format,
-)
-from mutcleaner.cleaners.cdna_proteolysis_custom_cleaners import (
-    validate_wt_sequence,
-    average_labels_by_name,
-    subtract_labels_by_wt,
-)
-from mutcleaner.core.dataset import MutationDataset
-from mutcleaner.core.pipeline import create_pipeline
-
-dataset = pd.read_csv("path/to/Tsuboyama2023_Dataset2_Dataset3_20230416.csv")
-
-pipeline = create_pipeline(dataset, "cdna_proteolysis_cleaner")
-clean_result = (
-    pipeline.then(
-        extract_and_rename_columns,
-        column_mapping={
-            "WT_name": "name",
-            "aa_seq": "mut_seq",
-            "mut_type": "mut_info",
-            "ddG_ML": "ddG",
-        },
-    )
-    .then(filter_and_clean_data, filters={"ddG": lambda x: x != "-"})
-    .then(convert_data_types, type_conversions={"ddG": "float"})
-    .then(
-        validate_mutations,
-        mutation_column="mut_info",
-        mutation_sep="_",
-        is_zero_based=False,
-        num_workers=16,
-    )
-    .then(
-        average_labels_by_name,
-        name_columns=("name", "mut_info"),
-        label_columns="ddG",
-    )
-    .then(
-        validate_wt_sequence,
-        name_column="name",
-        mutation_column="mut_info",
-        sequence_column="mut_seq",
-        wt_identifier="wt",
-        num_workers=16,
-    )
-    .then(
-        subtract_labels_by_wt,
-        name_column="name",
-        label_columns="ddG",
-        mutation_column="mut_info",
-        in_place=True,
-    )
-    .then(
-        convert_to_mutation_dataset_format,
-        name_column="name",
-        mutation_column="mut_info",
-        mutated_sequence_column="mut_seq",
-        score_column="ddG",
-        is_zero_based=True,
-    )
-)
-
-cdna_proteolysis_dataset_df, cdna_proteolysis_ref_seq = clean_result.data
-cdna_proteolysis_dataset = MutationDataset.from_dataframe(
-    cdna_proteolysis_dataset_df,
-    cdna_proteolysis_ref_seq,
-)
-
-execution_info = pipeline.get_execution_summary()
-artifacts = pipeline.artifacts
-pipeline.save_structured_data("cdna_proteolysis_cleaner_pipeline.pkl")
-```
 
 ## Citation
 
@@ -235,7 +172,7 @@ If you use MutCleaner in your research, please cite:
   title={
     MutCleaner: An efficient framework for cleaning, standardizing, and processing biological mutation data.
   },
-  author={Yuxiang Tang and Ziyu Shi},
+  author={Ziyu Shi and Yuxiang Tang},
   year={2026},
   url={https://github.com/xulab-research/MutCleaner}
 }
