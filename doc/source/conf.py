@@ -18,6 +18,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.githubpages",
     "myst_parser",
+    "sphinxcontrib.mermaid",
     "sphinx_copybutton",
     "sphinx_design",
     "sphinx_autodoc_typehints",

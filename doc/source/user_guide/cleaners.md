@@ -32,7 +32,7 @@ pip install mutcleaner
 
 ### Workflow Overview
 
-```mermaid
+```{mermaid}
 flowchart LR
     A["Download / prepare<br/>source dataset"] --> B["Create<br/>cleaner"]
     B --> C["Run<br/>cleaning pipeline"]
