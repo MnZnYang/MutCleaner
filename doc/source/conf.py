@@ -47,3 +47,5 @@ html_theme_options = {
     "show_nav_level": 2,
     "show_toc_level": 2,
 }
+
+myst_fence_as_directive = ["mermaid"]

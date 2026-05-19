@@ -115,52 +115,6 @@ See the [Data Cleaners Usage Guide](https://xulab-research.github.io/MutCleaner/
 | RBD Antibody Dataset | [Antibodies elicited by mRNA-1273 vaccination bind more broadly to the receptor binding domain than do those from SARS-CoV-2 infection](https://doi.org/10.1126/scitranslmed.abi9915), [Comprehensive mapping of mutations in the SARS-CoV-2 receptor-binding domain that affect recognition by polyclonal human plasma antibodies](https://doi.org/10.1016/j.chom.2021.02.003), [Mapping mutations to the SARS-CoV-2 RBD that escape binding by different classes of antibodies](https://doi.org/10.1038/s41467-021-24435-8), [Genetic and structural basis for SARS-CoV-2 variant neutralization by a two-antibody cocktail](https://doi.org/10.1038/s41564-021-00972-2), [SARS-CoV-2 RBD antibodies that maximize breadth and resistance to escape](https://doi.org/10.1038/s41586-021-03807-6), [Prospective mapping of viral mutations that escape antibodies used to treat COVID-19](https://doi.org/10.1126/science.abf9302) | [SARS-CoV-2-RBD_MAP_Moderna_scores.csv](https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_Moderna_scores.csv), [SARS-CoV-2-RBD_MAP_HAARVI_sera_scores.csv](https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_HAARVI_sera_scores.csv), [SARS-CoV-2-RBD_MAP_Rockefeller_scores.csv](https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_Rockefeller_scores.csv), [SARS-CoV-2-RBD_MAP_AZ_Abs_scores.csv](https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_AZ_Abs_scores.csv), [SARS-CoV-2-RBD_MAP_Vir_mAbs_scores.csv](https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_Vir_mAbs_scores.csv), [SARS-CoV-2-RBD_MAP_clinical_Abs_scores.csv](https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_clinical_Abs_scores.csv) |
 
 
-
-### Processing cDNA Proteolysis Dataset
-
-Here's a complete example demonstrating MutCleaner's capabilities with the cDNA Proteolysis mutation dataset:
-
-```python
-# ddg as label
-import pickle
-from pathlib import Path
-from mutcleaner import download_cdna_proteolysis_source_file
-from mutcleaner.cleaners import (
-    create_cdna_proteolysis_cleaner,
-    clean_cdna_proteolysis_dataset,
-)
-
-# Prepare dataset
-download_cdna_proteolysis_source_file("raw_dataset/cDNA_Proteolysis_Dataset")
-
-# File settings
-dataset_filepath = Path("raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv")
-artifact_path = Path("logs/cDNA_Proteolysis_ddG_Dataset/artifacts.pkl")
-artifact_csv_dir = Path("logs/cDNA_Proteolysis_ddG_Dataset")
-
-artifact_csv_dir.mkdir(parents=True, exist_ok=True)
-
-# Clean data
-cdna_cleaning_pipeline = create_cdna_proteolysis_cleaner(dataset_filepath)
-cdna_cleaning_pipeline, cdna_dataset = clean_cdna_proteolysis_dataset(
-    cdna_cleaning_pipeline
-)
-
-# Save data
-cdna_dataset.save("cleaned_dataset/cleaned_cDNA_Proteolysis_ddG_Dataset")
-cdna_cleaning_pipeline.save_artifacts(artifact_path)
-
-# open the pickle file
-with open(artifact_path, "rb") as file:
-    artifacts = pickle.load(file)
-
-for artifact_name, artifact_df in artifacts.items():
-    artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
-
-```
-
-
-
 ## Core Features
 
 ### Sequence Data Manipulation
