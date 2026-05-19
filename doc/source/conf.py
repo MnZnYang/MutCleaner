@@ -5,8 +5,8 @@ project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, f"{project_root}")
 
 project = "mutcleaner"
-copyright = "2026, Yuxiang Tang, ZiyuShi"
-author = "Yuxiang Tang and ZiyuShi"
+copyright = "2026, Yuxiang Tang, Ziyu Shi"
+author = "Yuxiang Tang and Ziyu Shi"
 release = "v0.1.0"
 
 extensions = [
