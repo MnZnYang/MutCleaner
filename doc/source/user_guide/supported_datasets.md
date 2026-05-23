@@ -30,7 +30,9 @@ def main():
     artifact_csv_dir.mkdir(parents=True, exist_ok=True)
 
     # Clean data
-    hd_cleaning_pipeline = create_human_domainome_sup2_cleaner(dataset_file_path)
+    hd_cleaning_pipeline = create_human_domainome_sup2_cleaner(
+        dataset_file_path
+    )
     hd_cleaning_pipeline, hd_dataset = clean_human_domainome_sup2_dataset(
         hd_cleaning_pipeline
     )
@@ -44,7 +46,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -76,13 +80,17 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare data
-    download_proteingym_source_file("raw_dataset/ProteinGym_DMS_Substitutions_Dataset")
+    download_proteingym_source_file(
+        "raw_dataset/ProteinGym_DMS_Substitutions_Dataset"
+    )
 
     # File settings
     dataset_file_path = Path(
         "raw_dataset/ProteinGym_DMS_Substitutions_Dataset/ProteinGym_DMS_substitutions.zip"
     )
-    artifact_path = Path("logs/ProteinGym_DMS_Substitutions_Dataset/artifacts.pkl")
+    artifact_path = Path(
+        "logs/ProteinGym_DMS_Substitutions_Dataset/artifacts.pkl"
+    )
     artifact_csv_dir = Path("logs/ProteinGym_DMS_Substitutions_Dataset")
 
     artifact_csv_dir.mkdir(parents=True, exist_ok=True)
@@ -91,12 +99,14 @@ def main():
     pg_cleaning_pipeline = create_proteingym_dms_substitutions_cleaner(
         dataset_file_path
     )
-    pg_cleaning_pipeline, pg_dataset = clean_proteingym_dms_substitutions_dataset(
-        pg_cleaning_pipeline
+    pg_cleaning_pipeline, pg_dataset = (
+        clean_proteingym_dms_substitutions_dataset(pg_cleaning_pipeline)
     )
 
     # Save data
-    pg_dataset.save("cleaned_dataset/cleaned_ProteinGym_DMS_Substitutions_Dataset")
+    pg_dataset.save(
+        "cleaned_dataset/cleaned_ProteinGym_DMS_Substitutions_Dataset"
+    )
     pg_cleaning_pipeline.save_artifacts(artifact_path)
 
     # Read artifacts from the pickle file and read the object
@@ -104,7 +114,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -139,7 +151,9 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare dataset
-    download_cdna_proteolysis_source_file("raw_dataset/cDNA_Proteolysis_Dataset")
+    download_cdna_proteolysis_source_file(
+        "raw_dataset/cDNA_Proteolysis_Dataset"
+    )
 
     # File settings
     dataset_file_path = Path(
@@ -165,7 +179,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -227,7 +243,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -277,7 +295,9 @@ def main():
         )
 
         # Save data
-        ddgdtm_dataset.save(f"cleaned_dataset/cleaned_ddG_dTm_Dataset/{data_file}")
+        ddgdtm_dataset.save(
+            f"cleaned_dataset/cleaned_ddG_dTm_Dataset/{data_file}"
+        )
         ddgdtm_cleaning_pipeline.save_artifacts(artifact_path)
 
         # Read artifacts from the pickle file
@@ -285,7 +305,9 @@ def main():
             artifacts = pickle.load(file)
 
         for artifact_name, artifact_df in artifacts.items():
-            artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+            artifact_df.to_csv(
+                artifact_csv_dir / f"{artifact_name}.csv", index=False
+            )
 
 
 if __name__ == "__main__":
@@ -319,7 +341,9 @@ from mutcleaner.cleaners import (
 
 def main():
     # Prepare dataset
-    download_archstabms1e10_source_file("raw_dataset/ArchStabMS1E10_Epistasis_Dataset")
+    download_archstabms1e10_source_file(
+        "raw_dataset/ArchStabMS1E10_Epistasis_Dataset"
+    )
 
     # File settings
     dataset_file_path = Path(
@@ -331,13 +355,17 @@ def main():
     artifact_csv_dir.mkdir(parents=True, exist_ok=True)
 
     # Clean data
-    archstabms_cleaning_pipeline = create_archstabms_1e10_cleaner(dataset_file_path)
-    archstabms_cleaning_pipeline, archstabms_dataset = clean_archstabms_1e10_dataset(
-        archstabms_cleaning_pipeline
+    archstabms_cleaning_pipeline = create_archstabms_1e10_cleaner(
+        dataset_file_path
+    )
+    archstabms_cleaning_pipeline, archstabms_dataset = (
+        clean_archstabms_1e10_dataset(archstabms_cleaning_pipeline)
     )
 
     # Save data
-    archstabms_dataset.save("cleaned_dataset/cleaned_ArchStabMS1E10_Epistasis_Dataset")
+    archstabms_dataset.save(
+        "cleaned_dataset/cleaned_ArchStabMS1E10_Epistasis_Dataset"
+    )
     archstabms_cleaning_pipeline.save_artifacts(artifact_path)
 
     # Read artifacts from the pickle file
@@ -345,7 +373,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -410,7 +440,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -456,7 +488,9 @@ def main():
 
     # Clean data
     trpb_cleaning_pipeline = create_trpb_cleaner(dataset_file_path)
-    trpb_cleaning_pipeline, trpb_dataset = clean_trpb_dataset(trpb_cleaning_pipeline)
+    trpb_cleaning_pipeline, trpb_dataset = clean_trpb_dataset(
+        trpb_cleaning_pipeline
+    )
 
     # Save data
     trpb_dataset.save("cleaned_dataset/cleaned_TrpB_Epistasis_Dataset")
@@ -467,7 +501,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -532,7 +568,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -579,7 +617,9 @@ def main():
 
     # Clean data
     ctxm_cleaning_pipeline = create_ctxm_cleaner(dataset_file_path)
-    ctxm_cleaning_pipeline, ctxm_dataset = clean_ctxm_dataset(ctxm_cleaning_pipeline)
+    ctxm_cleaning_pipeline, ctxm_dataset = clean_ctxm_dataset(
+        ctxm_cleaning_pipeline
+    )
 
     # Save data
     ctxm_dataset.save("cleaned_dataset/cleaned_CTXM_Epistasis_Dataset")
@@ -590,7 +630,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
@@ -633,7 +675,9 @@ def main():
     ctxm_cleaning_pipeline = create_ctxm_cleaner(
         dataset_file_path, ctxm_cleaning_config
     )
-    ctxm_cleaning_pipeline, ctxm_dataset = clean_ctxm_dataset(ctxm_cleaning_pipeline)
+    ctxm_cleaning_pipeline, ctxm_dataset = clean_ctxm_dataset(
+        ctxm_cleaning_pipeline
+    )
 
     # Save data
     ctxm_dataset.save("cleaned_dataset/cleaned_CTXM_Epistasis_Dataset")
@@ -644,7 +688,9 @@ def main():
         artifacts = pickle.load(file)
 
     for artifact_name, artifact_df in artifacts.items():
-        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+        artifact_df.to_csv(
+            artifact_csv_dir / f"{artifact_name}.csv", index=False
+        )
 
 
 if __name__ == "__main__":
