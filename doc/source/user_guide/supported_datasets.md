@@ -21,7 +21,9 @@ def main():
     download_human_domainome_source_file("raw_dataset/Human_Domainome_Dataset")
 
     # File settings
-    dataset_file_path = Path("raw_dataset/Human_Domainome_Dataset/SupplementaryTable2.txt")
+    dataset_file_path = Path(
+        "raw_dataset/Human_Domainome_Dataset/SupplementaryTable2.txt"
+    )
     artifact_path = Path("logs/Human_Domainome_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/Human_Domainome_Dataset")
 
@@ -77,7 +79,9 @@ def main():
     download_proteingym_source_file("raw_dataset/ProteinGym_DMS_Substitutions_Dataset")
 
     # File settings
-    dataset_file_path = Path("raw_dataset/ProteinGym_DMS_Substitutions_Dataset/ProteinGym_DMS_substitutions.zip")
+    dataset_file_path = Path(
+        "raw_dataset/ProteinGym_DMS_Substitutions_Dataset/ProteinGym_DMS_substitutions.zip"
+    )
     artifact_path = Path("logs/ProteinGym_DMS_Substitutions_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/ProteinGym_DMS_Substitutions_Dataset")
 
@@ -138,7 +142,9 @@ def main():
     download_cdna_proteolysis_source_file("raw_dataset/cDNA_Proteolysis_Dataset")
 
     # File settings
-    dataset_file_path = Path("raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv")
+    dataset_file_path = Path(
+        "raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv"
+    )
     artifact_path = Path("logs/cDNA_Proteolysis_ddG_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/cDNA_Proteolysis_ddG_Dataset")
 
@@ -196,7 +202,9 @@ def main():
     }
 
     # File settings
-    dataset_file_path = Path("raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv")
+    dataset_file_path = Path(
+        "raw_dataset/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv"
+    )
     artifact_path = Path("logs/cDNA_Proteolysis_dG_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/cDNA_Proteolysis_dG_Dataset")
 
@@ -314,7 +322,9 @@ def main():
     download_archstabms1e10_source_file("raw_dataset/ArchStabMS1E10_Epistasis_Dataset")
 
     # File settings
-    dataset_file_path = Path("raw_dataset/ArchStabMS1E10_Epistasis_Dataset/ArchStabMS1E10_Epistasis_Dataset.csv")
+    dataset_file_path = Path(
+        "raw_dataset/ArchStabMS1E10_Epistasis_Dataset/ArchStabMS1E10_Epistasis_Dataset.csv"
+    )
     artifact_path = Path("logs/ArchStabMS1E10_Epistasis_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/ArchStabMS1E10_Epistasis_Dataset")
 
@@ -373,7 +383,9 @@ def main():
     )
 
     # File settings
-    dataset_file_path = Path("raw_dataset/Antitoxin_ParD3_Epistasis_Dataset/Antitoxin_ParD3_Epistasis_Dataset.csv")
+    dataset_file_path = Path(
+        "raw_dataset/Antitoxin_ParD3_Epistasis_Dataset/Antitoxin_ParD3_Epistasis_Dataset.csv"
+    )
     artifact_path = Path("logs/Antitoxin_ParD3_Epistasis_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/Antitoxin_ParD3_Epistasis_Dataset")
 
@@ -434,7 +446,9 @@ def main():
     download_trpb_source_file("raw_dataset/TrpB_Epistasis_Dataset")
 
     # File settings
-    dataset_file_path = Path("raw_dataset/TrpB_Epistasis_Dataset/TrpB_Epistasis_Dataset.csv")
+    dataset_file_path = Path(
+        "raw_dataset/TrpB_Epistasis_Dataset/TrpB_Epistasis_Dataset.csv"
+    )
     artifact_path = Path("logs/TrpB_Epistasis_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/TrpB_Epistasis_Dataset")
 
@@ -491,7 +505,9 @@ def main():
     )
 
     # File settings
-    dataset_file_path = Path("raw_dataset/Human_Myoglobin_Epistasis_Dataset/Human_Myoglobin_Epistasis_Dataset.csv")
+    dataset_file_path = Path(
+        "raw_dataset/Human_Myoglobin_Epistasis_Dataset/Human_Myoglobin_Epistasis_Dataset.csv"
+    )
     artifact_path = Path("logs/Human_Myoglobin_Epistasis_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/Human_Myoglobin_Epistasis_Dataset")
 
@@ -553,7 +569,9 @@ def main():
     download_ctxm_source_file("raw_dataset/CTXM_Epistasis_Dataset")
 
     # File settings
-    dataset_file_path = Path("raw_dataset/CTXM_Epistasis_Dataset/CTXM_Ampicillin_Epistasis_Dataset.csv")
+    dataset_file_path = Path(
+        "raw_dataset/CTXM_Epistasis_Dataset/CTXM_Ampicillin_Epistasis_Dataset.csv"
+    )
     artifact_path = Path("logs/CTXM_Ampicillin_Epistasis_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/CTXM_Ampicillin_Epistasis_Dataset")
 
@@ -603,7 +621,9 @@ def main():
     ctxm_cleaning_config.wt_name = "CTXM_cefotaxime"
 
     # File settings
-    dataset_file_path = Path("raw_dataset/CTXM_Epistasis_Dataset/CTXM_Cefotaxime_Epistasis_Dataset.csv")
+    dataset_file_path = Path(
+        "raw_dataset/CTXM_Epistasis_Dataset/CTXM_Cefotaxime_Epistasis_Dataset.csv"
+    )
     artifact_path = Path("logs/CTXM_Cefotaxime_Epistasis_Dataset/artifacts.pkl")
     artifact_csv_dir = Path("logs/CTXM_Cefotaxime_Epistasis_Dataset")
 
