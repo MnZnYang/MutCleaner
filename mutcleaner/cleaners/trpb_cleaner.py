@@ -13,8 +13,9 @@ from .basic_cleaners import (
     add_columns,
     extract_and_rename_columns,
     filter_and_clean_data,
+    validate_mutations,
     convert_data_types,
-    infer_mutations_from_sequences,
+    apply_mutations_to_sequences,
     convert_to_mutation_dataset_format,
     average_labels_by_name,
 )
@@ -74,15 +75,15 @@ class TrpBCleanerConfig(BaseCleanerConfig):
     # Column mapping configuration
     column_mapping: Dict[str, str] = field(
         default_factory=lambda: {
-            "protein": "mut_seq",
-            "label": "label",
+            "mutation_name": "mut_info",
+            "fitness": "label",
         }
     )
 
     # Data filtering configuration - no specific filters needed for TrpB
     filters: Dict[str, Callable] = field(
         default_factory=lambda: {
-            "label_cDNAProteolysis": lambda s: pd.to_numeric(s, errors="coerce").notna()
+            "label": lambda s: pd.to_numeric(s, errors="coerce").notna()
         }
     )
 
@@ -94,8 +95,8 @@ class TrpBCleanerConfig(BaseCleanerConfig):
         "MKGYFGPYGGQYVPEILMGALEELEAAYEGIMKDESFWKEFNDLLRDYAGRPTPLYFARRLSEKYGARVYLKREDLLHTGAHKINNAIGQVLLAKLMGKTRIIAETGAGQHGVATATAAALFGMECVIYMGEEDTIRQKLNVERMKLLGAKVVPVKSGSRTLKDAIDEALRDWITNLQTTYYVFGSVVGPHPYPIIVRNFQKVIGEETKKQIPEKEGRLPDYIVACVSGGSNAAGIFYPFIDSGVKLIGVEAGGEGLETGKHAASLLKGKIGYLHGSKTFVLQDDWGQVQVSHSVSAGLDYSGVGPEHAYWRETGKVLYDAVTDEEALDAFIELSRLEGIIPALESSHALAYLKKINIKGKVVVVNLSGRGDKDLESVLNHPYVRERIRLEHHHHHH"
     )
 
-    # Wildtype inference parameters
-    infer_mut_workers: int = 16
+    # workers configuration
+    num_workers: int = 16
 
     # Score columns configuration
     label_columns: List[str] = field(default_factory=lambda: ["label"])
@@ -105,7 +106,7 @@ class TrpBCleanerConfig(BaseCleanerConfig):
     pipeline_name: str = "TrpB Cleaning Pipeline"
 
     def validate(self) -> None:
-        """Validate cDNAProteolysis-specific configuration parameters
+        """Validate TrpB-specific configuration parameters
 
         Raises
         ------
@@ -126,7 +127,7 @@ class TrpBCleanerConfig(BaseCleanerConfig):
             )
 
         # Validate column mapping
-        required_mappings = {"protein", "label"}
+        required_mappings = {"mutation_name", "fitness"}
         missing = required_mappings - set(self.column_mapping.keys())
         if missing:
             raise ValueError(f"Missing required column mappings: {missing}")
@@ -205,26 +206,35 @@ def create_trpb_cleaner(
                 columns_to_add={"name": "TrpB", "wt_seq": final_config.wt_sequence},
             )
             .delayed_then(
-                infer_mutations_from_sequences,
-                wt_sequence_column="wt_seq",
-                mut_sequence_column=final_config.column_mapping.get(
-                    "protein", "protein"
+                validate_mutations,
+                mutation_column=final_config.column_mapping.get(
+                    "mutation_name", "mutation_name"
                 ),
-                num_workers=final_config.infer_mut_workers,
+                is_zero_based=True,
+                num_workers=final_config.num_workers,
+            )
+            .delayed_then(
+                apply_mutations_to_sequences,
+                sequence_column="wt_seq",
+                mutation_column=final_config.column_mapping.get(
+                    "mutation_name", "mutation_name"
+                ),
+                is_zero_based=True,
+                num_workers=final_config.num_workers,
             )
             .delayed_then(
                 average_labels_by_name,
-                name_columns="inferred_mutations",
+                name_columns="mut_seq",
                 label_columns=final_config.label_columns,
             )
             .delayed_then(
                 convert_to_mutation_dataset_format,
                 name_column="name",
-                mutation_column="inferred_mutations",
-                sequence_column="wt_seq",
-                mutated_sequence_column=final_config.column_mapping.get(
-                    "protein", "protein"
+                mutation_column=final_config.column_mapping.get(
+                    "mutation_name", "mutation_name"
                 ),
+                sequence_column="wt_seq",
+                mutated_sequence_column="mut_seq",
                 label_column=final_config.primary_label_column,
                 is_zero_based=True,
             )
