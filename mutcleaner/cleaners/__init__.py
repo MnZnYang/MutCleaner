@@ -67,9 +67,9 @@ from .rbd_ace2_cleaner import (
 )
 
 from .chitosanase_cleaner import (
-    RBDACE2CleanerConfig,
-    create_rbd_ace2_cleaner,
-    clean_rbd_ace2_dataset,
+    ChitosanaseCleanerConfig,
+    create_chitosanase_cleaner,
+    clean_chitosanase_dataset,
 )
 
 __all__ = [
