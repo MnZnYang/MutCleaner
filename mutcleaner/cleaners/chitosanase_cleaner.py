@@ -54,7 +54,9 @@ class ChitosanaseCleanerConfig(BaseCleanerConfig):
     """
 
     infer_mut_workers: int = 16
+    
     pipeline_name: str = "Chitosanase"
+    
     wt_separator: str = '">wt'
 
     def validate(self) -> None:
