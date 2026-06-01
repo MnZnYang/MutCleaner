@@ -24,16 +24,6 @@ def __dir__() -> List[str]:
     return __all__
 
 
-def _normalize_target_name(
-    raw_target_name: str,
-    target_name_aliases: Dict[str, str],
-) -> str:
-    """Resolve one raw target label to a canonical target name."""
-
-    raw_target_name = str(raw_target_name).strip()
-    return target_name_aliases.get(raw_target_name, raw_target_name)
-
-
 def _prepare_rbd_source_table(
     dataset: pd.DataFrame,
     *,
@@ -56,6 +46,7 @@ def _prepare_rbd_source_table(
         result[label_column].notna()
         & ~result["aa_substitutions"].str.contains(r"\*", regex=True, na=False)
     ].copy()
+
 
 @multiout_step(main="main", summary="summary")
 def prepare_rbd_records(
@@ -96,18 +87,12 @@ def prepare_rbd_records(
     summary = pd.DataFrame()
 
     if mode == "ace2":
-        result["name"] = result["target"].map(
-            lambda value: _normalize_target_name(
-                raw_target_name=str(value),
-                target_name_aliases=target_name_aliases,
-            )
+        result["name"] = result["target"].astype(str).str.strip().map(
+            lambda value: target_name_aliases.get(value, value)
         )
         standardized_df = result[["name", "mut_info", "variant_class", "label"]]
     elif mode == "antibody":
-        reference_id = _normalize_target_name(
-            raw_target_name=raw_reference_id,
-            target_name_aliases=target_name_aliases,
-        )
+        reference_id = target_name_aliases.get(raw_reference_id, raw_reference_id)
         reference_sequence = str(
             reference_sequences.get(reference_id)
             or (

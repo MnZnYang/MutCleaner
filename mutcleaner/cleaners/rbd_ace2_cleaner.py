@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from copy import deepcopy
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -114,8 +114,6 @@ class RBDACE2Config(BaseCleanerConfig):
             "log10Ka": "log10Ka",
             "variant_class": "variant_class",
             "n_aa_substitutions": "n_aa_substitutions",
-            "pass_pre_count_filter": "pass_pre_count_filter",
-            "pass_ACE2bind_expr_filter": "pass_ACE2bind_expr_filter",
         }
     )
     validate_mut_workers: int = 16
@@ -123,32 +121,6 @@ class RBDACE2Config(BaseCleanerConfig):
     label_columns: List[str] = field(default_factory=lambda: ["label"])
     primary_label_column: str = "label"
     pipeline_name: str = "RBDACE2"
-
-    @classmethod
-    def from_dict(
-        cls,
-        config_dict: Dict[str, Any],
-    ) -> "RBDACE2Config":
-        """Create a config from a dictionary while ignoring unrelated keys.
-
-        Parameters
-        ----------
-        config_dict : Dict[str, Any]
-            Raw configuration dictionary.
-
-        Returns
-        -------
-        RBDACE2Config
-            Validated RBD ACE2 cleaner configuration.
-        """
-
-        config_fields = {one_field.name for one_field in fields(cls)}
-        payload = {
-            key: value for key, value in config_dict.items() if key in config_fields
-        }
-        config = cls(**{**payload, "validate_config": False})
-        config.validate()
-        return config
 
     def validate(self) -> None:
         """Validate RBD ACE2 cleaner configuration values.
@@ -194,31 +166,6 @@ class RBDACE2Config(BaseCleanerConfig):
                 )
 
 
-def _resolve_rbd_ace2_config(
-    config: Optional[
-        Union[RBDACE2Config, Dict[str, Any], str, Path]
-    ] = None,
-) -> RBDACE2Config:
-    """Normalize RBD ACE2 cleaner config inputs to one validated config object."""
-
-    default_config = RBDACE2Config()
-    if config is None:
-        final_config = default_config
-    elif isinstance(config, RBDACE2Config):
-        final_config = config
-    elif isinstance(config, dict):
-        final_config = default_config.merge(config)
-    elif isinstance(config, (str, Path)):
-        final_config = RBDACE2Config.from_json(config)
-    else:
-        raise TypeError(
-            "config must be RBDACE2Config, dict, str, Path or None, "
-            f"got {type(config)}"
-        )
-    final_config.validate()
-    return final_config
-
-
 def create_rbd_ace2_cleaner(
     dataset_or_path: Optional[Union[pd.DataFrame, str, Path]] = None,
     config: Optional[
@@ -246,7 +193,21 @@ def create_rbd_ace2_cleaner(
         If ``dataset_or_path`` or ``config`` uses an unsupported type.
     """
 
-    final_config = _resolve_rbd_ace2_config(config)
+    default_config = RBDACE2Config()
+    if config is None:
+        final_config = default_config
+    elif isinstance(config, RBDACE2Config):
+        final_config = config
+    elif isinstance(config, dict):
+        final_config = default_config.merge(config)
+    elif isinstance(config, (str, Path)):
+        final_config = RBDACE2Config.from_json(config)
+    else:
+        raise TypeError(
+            "config must be RBDACE2Config, dict, str, Path or None, "
+            f"got {type(config)}"
+        )
+    final_config.validate()
 
     logger.info(
         "RBD ACE2 dataset will be cleaned with pipeline: %s",

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from copy import deepcopy
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -94,19 +94,6 @@ class RBDAntibodyConfig(BaseCleanerConfig):
     primary_label_column: str = "label"
     pipeline_name: str = "RBDAntibody"
 
-    @classmethod
-    def from_dict(
-        cls,
-        config_dict: Dict[str, Any],
-    ) -> "RBDAntibodyConfig":
-        config_fields = {one_field.name for one_field in fields(cls)}
-        payload = {
-            key: value for key, value in config_dict.items() if key in config_fields
-        }
-        config = cls(**{**payload, "validate_config": False})
-        config.validate()
-        return config
-
     def validate(self) -> None:
         super().validate()
 
@@ -162,9 +149,12 @@ class RBDAntibodyConfig(BaseCleanerConfig):
             )
 
 
-def _resolve_rbd_antibody_config(
+def create_rbd_antibody_cleaner(
+    dataset_or_path: Optional[Union[pd.DataFrame, str, Path]] = None,
     config: Optional[Union[RBDAntibodyConfig, Dict[str, Any], str, Path]] = None,
-) -> RBDAntibodyConfig:
+) -> Pipeline:
+    """Create the RBD antibody cleaning pipeline."""
+
     default_config = RBDAntibodyConfig()
     if config is None:
         final_config = default_config
@@ -180,16 +170,6 @@ def _resolve_rbd_antibody_config(
             f"got {type(config)}"
         )
     final_config.validate()
-    return final_config
-
-
-def create_rbd_antibody_cleaner(
-    dataset_or_path: Optional[Union[pd.DataFrame, str, Path]] = None,
-    config: Optional[Union[RBDAntibodyConfig, Dict[str, Any], str, Path]] = None,
-) -> Pipeline:
-    """Create the RBD antibody cleaning pipeline."""
-
-    final_config = _resolve_rbd_antibody_config(config)
 
     logger.info(
         "RBD antibody dataset will be cleaned with pipeline: %s",
@@ -232,10 +212,10 @@ def create_rbd_antibody_cleaner(
             sequence_column="sequence",
             fallback_reference_sequence=final_config.fallback_reference_sequence,
         )
-        # `group_name` is only an internal WT-subtraction key. For the current
-        # antibody tables one file is usually one reference, so `antibody_name`
-        # would often be enough on its own, but we keep the combined key to
-        # preserve the existing downstream grouping behavior.
+        # `group_name` is solely an internal WT-subtraction key used for multiple references and antibodies. 
+        # For the current antibody tables one file is usually one reference, 
+        # so `antibody_name` would often be enough on its own, 
+        # but we keep the combined key to preserve the existing downstream grouping behavior.
         .delayed_then(
             merge_columns,
             columns_to_merge=["reference_id", "antibody_name"],
