@@ -10,6 +10,7 @@ import pandas as pd
 
 from .base_config import BaseCleanerConfig
 from .basic_cleaners import (
+    apply_mutations_to_sequences,
     average_labels_by_name,
     convert_to_mutation_dataset_format,
     convert_data_types,
@@ -22,8 +23,8 @@ from .basic_cleaners import (
 )
 from .rbd_custom_cleaner import (
     add_reference_sequences_by_target,
-    apply_mutations_preserving_wild_type,
-    standardize_rbd_antibody_records,
+    mark_wild_type_mutations,
+    standardize_rbd_target_names,
 )
 from ..core.dataset import MutationDataset
 from ..core.pipeline import Pipeline, create_pipeline
@@ -70,10 +71,10 @@ class RBDAntibodyCleanerConfig(BaseCleanerConfig):
 
     column_mapping: Dict[str, str] = field(
         default_factory=lambda: {
-            "name": "name",
-            "target": "target",
+            "name": "antibody_name",
+            "target": "reference_id",
             "score": "label",
-            "aa_substitutions": "aa_substitutions",
+            "aa_substitutions": "mut_info",
             "variant_class": "variant_class",
             "n_aa_substitutions": "n_aa_substitutions",
             "pass_pre_count_filter": "pass_pre_count_filter",
@@ -88,7 +89,7 @@ class RBDAntibodyCleanerConfig(BaseCleanerConfig):
         }
     )
 
-    drop_na_columns: List[str] = field(default_factory=lambda: ["target", "label"])
+    drop_na_columns: List[str] = field(default_factory=lambda: ["reference_id", "label"])
 
     type_conversions: Dict[str, str] = field(default_factory=lambda: {"label": "float"})
 
@@ -131,10 +132,10 @@ class RBDAntibodyCleanerConfig(BaseCleanerConfig):
             )
 
         required_standard_columns = {
-            "name",
-            "target",
+            "antibody_name",
+            "reference_id",
             "label",
-            "aa_substitutions",
+            "mut_info",
         }
         missing_standard_columns = required_standard_columns - set(
             self.column_mapping.values()
@@ -196,20 +197,21 @@ def create_rbd_antibody_cleaner(
             column_mapping=final_config.column_mapping,
         )
         .delayed_then(
-            filter_and_clean_data,
-            filters=final_config.filters,
-        )
-        .delayed_then(
             convert_data_types,
             type_conversions=final_config.type_conversions,
         )
         .delayed_then(
             filter_and_clean_data,
+            filters=final_config.filters,
             drop_na_columns=final_config.drop_na_columns,
         )
         .delayed_then(
-            standardize_rbd_antibody_records,
+            standardize_rbd_target_names,
             target_name_aliases=final_config.target_name_aliases,
+            name_column="reference_id",
+        )
+        .delayed_then(
+            mark_wild_type_mutations,
         )
         .delayed_then(
             validate_mutations,
@@ -226,13 +228,6 @@ def create_rbd_antibody_cleaner(
             name_columns=["reference_id", "antibody_name", "mut_info"],
             label_columns=final_config.label_columns,
         )
-        .delayed_then(
-            add_reference_sequences_by_target,
-            reference_sequences=final_config.reference_sequences,
-            name_column="reference_id",
-            sequence_column="sequence",
-            fallback_reference_sequence=final_config.fallback_reference_sequence,
-        )
         # `group_name` is solely an internal WT-subtraction key used for multiple references and antibodies.
         # For the current antibody tables one file is usually one reference,
         # so `antibody_name` would often be enough on its own,
@@ -244,17 +239,6 @@ def create_rbd_antibody_cleaner(
             separator="_",
         )
         .delayed_then(
-            apply_mutations_preserving_wild_type,
-            sequence_column="sequence",
-            name_column="group_name",
-            mutation_column="mut_info",
-            wt_identifier="WT",
-            mutation_sep=",",
-            is_zero_based=True,
-            sequence_type="protein",
-            num_workers=final_config.process_workers,
-        )
-        .delayed_then(
             subtract_labels_by_wt,
             name_column="group_name",
             label_columns=final_config.label_columns,
@@ -262,6 +246,23 @@ def create_rbd_antibody_cleaner(
             wt_identifier="WT",
             in_place=True,
             drop_wt_row=True,
+        )
+        .delayed_then(
+            add_reference_sequences_by_target,
+            reference_sequences=final_config.reference_sequences,
+            name_column="reference_id",
+            sequence_column="sequence",
+            fallback_reference_sequence=final_config.fallback_reference_sequence,
+        )
+        .delayed_then(
+            apply_mutations_to_sequences,
+            sequence_column="sequence",
+            name_column="group_name",
+            mutation_column="mut_info",
+            mutation_sep=",",
+            is_zero_based=True,
+            sequence_type="protein",
+            num_workers=final_config.process_workers,
         )
         .delayed_then(
             convert_to_mutation_dataset_format,

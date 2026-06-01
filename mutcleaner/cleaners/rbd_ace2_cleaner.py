@@ -10,11 +10,12 @@ import pandas as pd
 
 from .rbd_custom_cleaner import (
     add_reference_sequences_by_target,
-    apply_mutations_preserving_wild_type,
-    standardize_rbd_ace2_records,
+    mark_wild_type_mutations,
+    standardize_rbd_target_names,
 )
 from .base_config import BaseCleanerConfig
 from .basic_cleaners import (
+    apply_mutations_to_sequences,
     average_labels_by_name,
     convert_to_mutation_dataset_format,
     convert_data_types,
@@ -113,15 +114,14 @@ class RBDACE2CleanerConfig(BaseCleanerConfig):
     )
     column_mapping: Dict[str, str] = field(
         default_factory=lambda: {
-            "target": "target",
-            "aa_substitutions": "aa_substitutions",
+            "target": "name",
+            "aa_substitutions": "mut_info",
             "log10Ka": "label",
             "variant_class": "variant_class",
             "n_aa_substitutions": "n_aa_substitutions",
         }
     )
-    filters: Dict[str, Any] = field(default_factory=dict)
-    drop_na_columns: List[str] = field(default_factory=lambda: ["target", "label"])
+    drop_na_columns: List[str] = field(default_factory=lambda: ["name", "label"])
     type_conversions: Dict[str, str] = field(default_factory=lambda: {"label": "float"})
     validate_mut_workers: int = 16
     process_workers: int = 16
@@ -150,8 +150,8 @@ class RBDACE2CleanerConfig(BaseCleanerConfig):
                 f"must be in label_columns {self.label_columns}"
             )
         required_standard_columns = {
-            "target",
-            "aa_substitutions",
+            "name",
+            "mut_info",
             "label",
             "variant_class",
         }
@@ -229,10 +229,6 @@ def create_rbd_ace2_cleaner(
             column_mapping=final_config.column_mapping,
         )
         .delayed_then(
-            filter_and_clean_data,
-            filters=final_config.filters,
-        )
-        .delayed_then(
             convert_data_types,
             type_conversions=final_config.type_conversions,
         )
@@ -241,8 +237,12 @@ def create_rbd_ace2_cleaner(
             drop_na_columns=final_config.drop_na_columns,
         )
         .delayed_then(
-            standardize_rbd_ace2_records,
+            standardize_rbd_target_names,
             target_name_aliases=final_config.target_name_aliases,
+            name_column="name",
+        )
+        .delayed_then(
+            mark_wild_type_mutations,
         )
         .delayed_then(
             validate_mutations,
@@ -260,23 +260,6 @@ def create_rbd_ace2_cleaner(
             label_columns=final_config.label_columns,
         )
         .delayed_then(
-            add_reference_sequences_by_target,
-            reference_sequences=final_config.reference_sequences,
-            name_column="name",
-            sequence_column="sequence",
-        )
-        .delayed_then(
-            apply_mutations_preserving_wild_type,
-            sequence_column="sequence",
-            name_column="name",
-            mutation_column="mut_info",
-            wt_identifier="WT",
-            mutation_sep=",",
-            is_zero_based=True,
-            sequence_type="protein",
-            num_workers=final_config.process_workers,
-        )
-        .delayed_then(
             subtract_labels_by_wt,
             name_column="name",
             label_columns=final_config.label_columns,
@@ -284,6 +267,22 @@ def create_rbd_ace2_cleaner(
             wt_identifier="WT",
             in_place=True,
             drop_wt_row=True,
+        )
+        .delayed_then(
+            add_reference_sequences_by_target,
+            reference_sequences=final_config.reference_sequences,
+            name_column="name",
+            sequence_column="sequence",
+        )
+        .delayed_then(
+            apply_mutations_to_sequences,
+            sequence_column="sequence",
+            name_column="name",
+            mutation_column="mut_info",
+            mutation_sep=",",
+            is_zero_based=True,
+            sequence_type="protein",
+            num_workers=final_config.process_workers,
         )
         .delayed_then(
             convert_to_mutation_dataset_format,
