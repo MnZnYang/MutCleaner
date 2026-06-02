@@ -1,14 +1,21 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from .base_config import BaseCleanerConfig
 from .basic_cleaners import (
+    add_columns,
     apply_mutations_to_sequences,
+    convert_data_types,
     convert_to_mutation_dataset_format,
+    extract_and_rename_columns,
+    filter_and_clean_data,
+    subtract_labels_by_wt,
 )
 from .Chitosanase_custom_cleaners import parse_chitosanase_raw_file
 from ..core.dataset import MutationDataset
@@ -107,6 +114,38 @@ def create_chitosanase_cleaner(
         # Add cleaning steps
         pipeline = (
             pipeline.delayed_then(parse_chitosanase_raw_file, wt_separator=final_config.wt_separator)
+            .delayed_then(filter_and_clean_data, drop_na_columns=["Tm"])
+            .delayed_then(convert_data_types, type_conversions={"Tm": np.float64})
+            .delayed_then(
+                extract_and_rename_columns,
+                column_mapping={
+                    "aa_mut": "mut_info",
+                    "Tm": "Tm",
+                    "wt_seq": "sequence",
+                },
+            )
+            .delayed_then(
+                add_columns,
+                columns_to_add={"name": "Chitosanase"},
+            )
+            .delayed_then(
+                subtract_labels_by_wt,
+                name_column="name",
+                label_columns="Tm",
+                mutation_column="mut_info",
+                wt_identifier="WT",
+                in_place=True,
+                drop_wt_row=True,
+            )
+            .delayed_then(
+                extract_and_rename_columns,
+                column_mapping={
+                    "name": "name",
+                    "mut_info": "mut_info",
+                    "sequence": "sequence",
+                    "Tm": "dTm",
+                },
+            )
             .delayed_then(
                 apply_mutations_to_sequences,
                 sequence_column="sequence",
