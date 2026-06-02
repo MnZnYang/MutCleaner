@@ -873,9 +873,8 @@ def main():
 
     # File settings
     for dataset_filepath in sorted(raw_data_dir.glob("*.csv")):
-        data_file = dataset_filepath.stem
         artifact_path = Path(f"logs/Chitosanase_Dataset/artifacts.pkl")
-        artifact_csv_dir = Path(f"logs/Chitosanase_Dataset/{data_file}")
+        artifact_csv_dir = Path(f"logs/Chitosanase_Dataset")
 
         artifact_csv_dir.mkdir(parents=True, exist_ok=True)
 
@@ -884,7 +883,7 @@ def main():
         chitosanase_cleaning_pipeline, chitosanase_dataset = clean_chitosanase_dataset(chitosanase_cleaning_pipeline)
 
         # Save data
-        chitosanase_dataset.save(f"cleaned_dataset/cleaned_Chitosanase_Dataset/{data_file}")
+        chitosanase_dataset.save(f"cleaned_dataset/cleaned_Chitosanase_Dataset")
         chitosanase_cleaning_pipeline.save_artifacts(artifact_path)
 
         # open the pickle file
