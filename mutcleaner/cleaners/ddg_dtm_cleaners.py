@@ -50,8 +50,8 @@ class DdgDtmCleanerConfig(BaseCleanerConfig):
 
     Alternatively, the raw ddG-dTm files can be obtained from:
 
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/tree/main/ddG_datasets
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/tree/main/dTm_datasets
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/tree/main/ddG_Dataset
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/tree/main/dTm_Dataset
 
     Attributes
     ----------

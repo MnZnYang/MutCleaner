@@ -53,7 +53,6 @@ class CDNAProteolysisCleanerConfig(BaseCleanerConfig):
 
     Alternatively, the raw cDNAProteolysis file can be obtained from:
 
-    - Zenodo: https://zenodo.org/records/7992926, File `Tsuboyama2023_Dataset2_Dataset3_20230416.csv` in `Processed_K50_dG_datasets.zip`
     - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/cDNA_Proteolysis_Dataset/Tsuboyama2023_Dataset2_Dataset3_20230416.csv
 
     Attributes

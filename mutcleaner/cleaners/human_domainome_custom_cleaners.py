@@ -25,9 +25,6 @@ def __dir__() -> List[str]:
     return __all__
 
 
-# ==================================================================
-# ======== Pipeline Functions Used in Supplementary Table 2 ========
-# ==================================================================
 @pipeline_step
 def generate_mutation_strings(
     dataset: pd.DataFrame,

@@ -52,8 +52,7 @@ class HumanMyoglobinCleanerConfig(BaseCleanerConfig):
 
     Alternatively, the raw hMb file can be obtained from:
 
-    - Zenodo: https://zenodo.org/records/7992926, File `Tsuboyama2023_Dataset2_Dataset3_20230416.csv` in `Processed_K50_dG_datasets.zip`
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/blob/main/hMb/hMb.csv
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/Human_Myoglobin_Epistasis_Dataset/Human_Myoglobin_Epistasis_Dataset.csv
 
     Attributes
     ----------

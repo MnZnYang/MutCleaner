@@ -49,7 +49,7 @@ class ArchStabMS1E10CleanerConfig(BaseCleanerConfig):
 
     Alternatively, the raw archstabms1e10 file can be obtained from:
 
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/blob/main/archstabms_1e10/archstabms_1e10.csv
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/ArchStabMS1E10_Epistasis_Dataset/ArchStabMS1E10_Epistasis_Dataset.csv
 
     Attributes
     ----------
