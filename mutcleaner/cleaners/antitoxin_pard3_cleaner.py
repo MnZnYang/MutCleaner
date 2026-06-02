@@ -55,7 +55,7 @@ class AntitoxinParD3CleanerConfig(BaseCleanerConfig):
 
     Alternatively, the raw Antitoxin file can be obtained from:
 
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/blob/main/antitoxin/antitoxin.csv
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/Antitoxin_ParD3_Epistasis_Dataset/Antitoxin_ParD3_Epistasis_Dataset.csv
 
     Attributes
     ----------

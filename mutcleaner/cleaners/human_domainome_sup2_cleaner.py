@@ -47,10 +47,10 @@ class HumanDomainomeSup2CleanerConfig(BaseCleanerConfig):
 
     Simply run `mutcleaner.download_human_domainome_source_file()` to download the dataset.
 
-    Alternatively, the raw HumanDomainome file can be obtained from:
+    Alternatively, the raw HumanDomainome file and the wild type fasta file can be obtained from:
 
-    - Nature artical: 'Site-saturation mutagenesis of 500 human protein domains', File `SupplementaryTable2.txt`
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/blob/main/human_domainome/SupplementaryTable2.txt
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/Human_Domainome_Dataset/SupplementaryTable2.txt
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/Human_Domainome_Dataset/wild_type.fasta
 
     Attributes
     ----------

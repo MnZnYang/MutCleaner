@@ -50,8 +50,8 @@ class CTXMCleanerConfig(BaseCleanerConfig):
 
     Alternatively, the raw CTXM file can be obtained from:
 
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/blob/main/CTXM/CTXM_ampicillin.csv
-    - Hugging Face: https://huggingface.co/datasets/xulab-research/TidyMut/blob/main/CTXM/CTXM_cefotaxime.csv
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/CTXM_Epistasis_Dataset/CTXM_Ampicillin_Epistasis_Dataset.csv
+    - Hugging Face: https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/CTXM_Epistasis_Dataset/CTXM_Cefotaxime_Epistasis_Dataset.csv
 
     Attributes
     ----------
