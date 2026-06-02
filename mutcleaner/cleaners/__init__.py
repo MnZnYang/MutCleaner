@@ -56,6 +56,12 @@ from .rbd_antibody_cleaner import (
     create_rbd_antibody_cleaner,
 )
 
+from .chitosanase_cleaner import (
+    ChitosanaseCleanerConfig,
+    create_chitosanase_cleaner,
+    clean_chitosanase_dataset,
+)
+
 __all__ = [
     "CDNAProteolysisCleanerConfig",
     "create_cdna_proteolysis_cleaner",
@@ -87,6 +93,9 @@ __all__ = [
     "RBDACE2CleanerConfig",
     "create_rbd_ace2_cleaner",
     "clean_rbd_ace2_dataset",
+    "ChitosanaseCleanerConfig",
+    "create_chitosanase_cleaner",
+    "clean_chitosanase_dataset",
     "RBDAntibodyCleanerConfig",
     "create_rbd_antibody_cleaner",
     "clean_rbd_antibody_dataset",

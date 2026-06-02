@@ -188,6 +188,11 @@ See the [Data Cleaners Usage Guide](https://xulab-research.github.io/MutCleaner/
       <td><a href="https://doi.org/10.1038/s41586-021-03807-6">SARS-CoV-2 RBD antibodies that maximize breadth and resistance to escape</a></td>
       <td><a href="https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/RBD_Antibody_Dataset/SARS-CoV-2-RBD_MAP_Vir_mAbs.csv">SARS-CoV-2-RBD_MAP_Vir_mAbs.csv</a></td>
     </tr>
+    <tr>
+      <td>Chitosanase Dataset</td>
+      <td>None</td>
+      <td><a href="https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/Chitosanase_Dataset/Chitosanase_Dataset.csv">Chitosanase_Dataset.csv</a></td>
+    </tr>
   </tbody>
 </table>
 

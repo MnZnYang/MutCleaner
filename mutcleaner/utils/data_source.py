@@ -293,6 +293,15 @@ DATASETS = {
             },
         },
     },
+    "Chitosanase Dataset": {
+        "paper_title": "Chitosanase_dataset",
+        "official_doi": None,
+        "files": ["Chitosanase_Dataset.csv"],
+        "huggingface_repos": [
+            "datasets/xulab-research/MutCleaner/resolve/main/Chitosanase_Dataset/Chitosanase_Dataset.csv?download=true",
+        ],
+        "file_name": ["Chitosanase_Dataset.csv"],
+    },
 }
 
 
@@ -320,6 +329,7 @@ def list_datasets_with_built_in_cleaners() -> None:
     - CTXM Epistasis Dataset
     - RBD Antibody Dataset
     - RBD ACE2 Dataset
+    - Chitosanase Dataset
     """
     print("Public datasets with ready-to-use cleaning pipelines:")
     for key, info in DATASETS.items():

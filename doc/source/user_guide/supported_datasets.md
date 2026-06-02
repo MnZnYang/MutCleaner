@@ -849,3 +849,60 @@ Alternatively, you can download it from
 ### Advanced Settings
 
 See {py:class}`mutcleaner.cleaners.RBDAntibodyCleanerConfig` for details.
+
+
+## Chitosanase Dataset
+
+### Basic Usage
+
+You can download the source file directly by running (see {py:func}`mutcleaner.utils.download_chitosanase_source_file` for details):
+```python
+import pickle
+from pathlib import Path
+from mutcleaner import download_chitosanase_source_file
+from mutcleaner.cleaners import (
+    create_chitosanase_cleaner,
+    clean_chitosanase_dataset,
+)
+
+
+def main():
+    # Prepare data
+    raw_data_dir = Path("raw_dataset/Chitosanase_Dataset")
+    download_chitosanase_source_file(raw_data_dir, overwrite=True)
+
+    # File settings
+    for dataset_filepath in sorted(raw_data_dir.glob("*.csv")):
+        artifact_path = Path(f"logs/Chitosanase_Dataset/artifacts.pkl")
+        artifact_csv_dir = Path(f"logs/Chitosanase_Dataset")
+
+        artifact_csv_dir.mkdir(parents=True, exist_ok=True)
+
+        # Clean data
+        chitosanase_cleaning_pipeline = create_chitosanase_cleaner(dataset_filepath)
+        chitosanase_cleaning_pipeline, chitosanase_dataset = clean_chitosanase_dataset(chitosanase_cleaning_pipeline)
+
+        # Save data
+        chitosanase_dataset.save(f"cleaned_dataset/cleaned_Chitosanase_Dataset")
+        chitosanase_cleaning_pipeline.save_artifacts(artifact_path)
+
+        # open the pickle file
+        with open(artifact_path, "rb") as file:
+            artifacts = pickle.load(file)
+
+        for artifact_name, artifact_df in artifacts.items():
+            artifact_df.to_csv(f"{artifact_csv_dir}/{artifact_name}.csv", index=False)
+
+
+if __name__ == "__main__":
+    import multiprocessing
+
+    multiprocessing.freeze_support()
+    main()
+
+
+```
+
+### Advanced Settings
+
+See {py:class}`mutcleaner.cleaners.ChitosanaseCleanerConfig` for details.
