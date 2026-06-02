@@ -27,6 +27,7 @@ from .core import (
 
 from .cleaners import (
     basic_cleaners,
+    rbd_antibody_cleaner,
     cdna_proteolysis_cleaner,
     human_domainome_sup2_cleaner,
     proteingym_dms_substitutions_cleaner,
@@ -36,7 +37,6 @@ from .cleaners import (
     ctxm_cleaner,
     trpb_cleaner,
     antitoxin_pard3_cleaner,
-    rbd_antibody_cleaner,
     rbd_ace2_cleaner,
 )
 
