@@ -1,4 +1,3 @@
-# mutcleaner/cleaners/CTXM_cleaners.py
 from __future__ import annotations
 
 import pandas as pd
@@ -19,6 +18,7 @@ from .basic_cleaners import (
     convert_to_mutation_dataset_format,
     apply_mutations_to_sequences,
 )
+from .ctxm_custom_cleaner import expand_mutations, map_ambler_positions
 from ..core.dataset import MutationDataset
 from ..core.pipeline import Pipeline, create_pipeline
 
@@ -74,23 +74,23 @@ class CTXMCleanerConfig(BaseCleanerConfig):
     # Column mapping configuration
     column_mapping: Dict[str, str] = field(
         default_factory=lambda: {
-            "mutant": "mut_info",
-            "label": "label",
+            "mut_info": "mut_info",
+            "fitness": "fitness",
         }
     )
 
     # Data filtering configuration
     filters: Dict[str, Callable] = field(
         default_factory=lambda: {
-            "label": lambda s: pd.to_numeric(s, errors="coerce").notna()
+            "is.reads0": lambda x: x == True,
         }
     )
 
     # Type conversion configuration
-    type_conversions: Dict[str, str] = field(default_factory=lambda: {"label": "float"})
+    type_conversions: Dict[str, str] = field(default_factory=lambda: {"fitness": "float"})
 
     # Wildtype sequence obtained from article
-    wt_sequence = "QTSAVQQKLAALEKSSGGRLGVALIDTADNTQVLYRGDERFPMCSTSKVMAAAAVLKQSETQKQLLNQPVEIKPADLVNYNPIAEKHVNGTMTLAELSAAALQYSDNTAMNKLIAQLGGPGGVTAFARAIGDETFRLDRTEPTLNTAIPGDPRDTTTPRAMAQTLRQLTLGHALGETQRAQLVTWLKGNTTGAASIRAGLPTSWTVGDKTGSGDYGTTNDIAVIWPQGRAPLVLVTYFTQPQQNAESRRDVLASAARIIAEGL"
+    wt_sequence = "RMMFAAAACIPLLLGSAPLYAQTSAVQQKLAALEKSSGGRLGVALIDTADNTQVLYRGDERFPMCSTSKVMAAAAVLKQSETQKQLLNQPVEIKPADLVNYNPIAEKHVNGTMTLAELSAAALQYSDNTAMNKLIAQLGGPGGVTAFARAIGDETFRLDRTEPTLNTAIPGDPRDTTTPRAMAQTLRQLTLGHALGETQRAQLVTWLKGNTTGAASIRAGLPTSWTVGDKTGSGDYGTTNDIAVIWPQGRAPLVLVTYFTQPQQNAESRRDVLASAARIIAEGL"
 
     # process parameters
     process_workers: int = 16
@@ -99,12 +99,21 @@ class CTXMCleanerConfig(BaseCleanerConfig):
     validate_mut_workers: int = 16
 
     # Score columns configuration
-    label_columns: List[str] = field(default_factory=lambda: ["label"])
-    
+    label_columns: List[str] = field(default_factory=lambda: ["fitness"])
+
+    ambler_to_seq_mapping: Dict[str, str] = field(
+        default_factory=lambda: {
+            'S70':'S66','K73':'K69','N104':'N100','Y105':'Y101','N106':'N102',
+            'S130':'S126','N132':'N128','E166':'E162','P167':'P163','N170':'N166',
+            'K234':'K230','T235':'T231','G236':'G232','S237':'S233','G238':'G234',
+            'D240':'D235','R276':'R270'
+        }
+    )
+
     # wt name
     wt_name: str = "CTXM_ampicillin"
     
-    primary_label_column: str = "label"
+    primary_label_column: str = "fitness"
 
     # Override default pipeline name
     pipeline_name: str = "CTXM Cleaning Pipeline"
@@ -131,7 +140,7 @@ class CTXMCleanerConfig(BaseCleanerConfig):
             )
 
         # Validate column mapping
-        required_mappings = {"mutant", "label"}
+        required_mappings = {"mut_info", "fitness"}
         missing = required_mappings - set(self.column_mapping.keys())
         if missing:
             raise ValueError(f"Missing required column mappings: {missing}")
@@ -197,10 +206,17 @@ def create_ctxm_cleaner(
         # Add cleaning steps
         pipeline = (
             pipeline.delayed_then(
+                read_dataset,
+                sep=r"\s+",
+            )
+            .delayed_then(filter_and_clean_data, filters=final_config.filters)
+            .delayed_then(
+                expand_mutations,
+            )
+            .delayed_then(
                 extract_and_rename_columns,
                 column_mapping=final_config.column_mapping,
             )
-            .delayed_then(filter_and_clean_data, filters=final_config.filters)
             .delayed_then(
                 convert_data_types, type_conversions=final_config.type_conversions
             )
@@ -212,42 +228,38 @@ def create_ctxm_cleaner(
                 },
             )
             .delayed_then(
+                map_ambler_positions,
+                mapping=final_config.ambler_to_seq_mapping,
+                mutation_column=final_config.column_mapping.get("mut_info", "mut_info"),
+            )
+            .delayed_then(
                 validate_mutations,
-                mutation_column=final_config.column_mapping.get("mutant", "mutant"),
+                mutation_column=final_config.column_mapping.get("mut_info", "mut_info"),
                 num_workers=final_config.validate_mut_workers,
             )
             .delayed_then(
                 average_labels_by_name,
-                name_columns="mut_info",
+                name_columns=final_config.column_mapping.get("mut_info", "mut_info"),
                 label_columns=final_config.label_columns,
             )
             .delayed_then(
                 apply_mutations_to_sequences,
                 sequence_column="wt_seq",
                 name_column="name",
-                mutation_column=final_config.column_mapping.get("mutant", "mutant"),
+                mutation_column=final_config.column_mapping.get("mut_info", "mut_info"),
                 is_zero_based=True,
                 num_workers=final_config.process_workers,
             )
             .delayed_then(
                 convert_to_mutation_dataset_format,
                 name_column="name",
-                mutation_column=final_config.column_mapping.get("mutant", "mutant"),
+                mutation_column=final_config.column_mapping.get("mut_info", "mut_info"),
                 sequence_column="wt_seq",
                 mutated_sequence_column="mut_seq",
                 label_column=final_config.primary_label_column,
                 is_zero_based=True,
             )
         )
-
-        # Create pipeline based on dataset_or_path type
-        if isinstance(dataset_or_path, (str, Path)):
-            pipeline.add_delayed_step(read_dataset, 0)
-        elif not isinstance(dataset_or_path, pd.DataFrame):
-            raise TypeError(
-                f"dataset_or_path must be pd.DataFrame or str/Path, "
-                f"got {type(dataset_or_path)}"
-            )
 
         return pipeline
 
