@@ -906,3 +906,56 @@ if __name__ == "__main__":
 ### Advanced Settings
 
 See {py:class}`mutcleaner.cleaners.ChitosanaseCleanerConfig` for details.
+
+
+## MGnify Dataset
+
+### Basic Usage
+
+You can download the source file directly by running (see {py:func}`mutcleaner.utils.download_mgnify_source_file` for details):
+```python
+import pickle
+from pathlib import Path
+from mutcleaner import download_mgnify_source_file
+from mutcleaner.cleaners import (
+    create_mgnify_cleaner,
+    clean_mgnify_dataset,
+)
+
+
+def main():
+    # Prepare data
+    download_mgnify_source_file("raw_dataset/MGnify_Dataset", overwrite=True)
+
+    artifact_path = Path("logs/MGnify_Dataset/artifacts.pkl")
+    artifact_csv_dir = Path("logs/MGnify_Dataset")
+    artifact_csv_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clean data
+    mgnify_cleaning_pipeline = create_mgnify_cleaner(Path("raw_dataset/MGnify_Dataset/ddG_mgnify_protein_all.csv"))
+    mgnify_cleaning_pipeline, mgnify_dataset = clean_mgnify_dataset(mgnify_cleaning_pipeline)
+    
+    # Save data
+    mgnify_dataset.save("cleaned_dataset/MGnify_cleaned")
+    mgnify_cleaning_pipeline.save_artifacts(artifact_path)
+
+    with open(artifact_path, "rb") as file:
+        artifacts = pickle.load(file)
+
+    for artifact_name, artifact_df in artifacts.items():
+        artifact_df.to_csv(artifact_csv_dir / f"{artifact_name}.csv", index=False)
+
+
+if __name__ == "__main__":
+    import multiprocessing
+
+    multiprocessing.freeze_support()
+    main()
+
+
+
+```
+
+### Advanced Settings
+
+See {py:class}`mutcleaner.cleaners.MGnifyCleanerConfig` for details.
