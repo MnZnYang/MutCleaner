@@ -39,6 +39,7 @@ from .cleaners import (
     antitoxin_pard3_cleaner,
     rbd_ace2_cleaner,
     chitosanase_cleaner,
+    cdna_mgnify_cleaner,
 )
 
 from .utils import (
@@ -57,4 +58,5 @@ from .utils import (
     download_rbd_antibody_source_file,
     download_rbd_ace2_source_file,
     download_chitosanase_source_file,
+    download_mgnify_source_file,
 )
