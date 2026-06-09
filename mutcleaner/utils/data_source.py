@@ -302,6 +302,15 @@ DATASETS = {
         ],
         "file_name": ["Chitosanase_Dataset.csv"],
     },
+    "MGnify Dataset": {
+        "paper_title": "MGnify_dataset",
+        "official_doi": None,
+        "files": ["ddG_mgnify_protein_all.csv"],
+        "huggingface_repos": [
+            "datasets/xulab-research/MutCleaner/resolve/main/ddG_mgnify_Dataset/ddG_mgnify_protein_all.csv?download=true",
+        ],
+        "file_name": ["ddG_mgnify_protein_all.csv"],
+    },
 }
 
 
@@ -330,6 +339,7 @@ def list_datasets_with_built_in_cleaners() -> None:
     - RBD Antibody Dataset
     - RBD ACE2 Dataset
     - Chitosanase Dataset
+    - MGnify Dataset
     """
     print("Public datasets with ready-to-use cleaning pipelines:")
     for key, info in DATASETS.items():
