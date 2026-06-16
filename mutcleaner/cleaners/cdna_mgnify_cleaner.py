@@ -91,7 +91,6 @@ class MGnifyCleanerConfig(BaseCleanerConfig):
     def __post_init__(self):
         self.nearest_by = [(str(col), float(target)) for col, target in self.nearest_by]
         super().__post_init__()
-        self.nearest_by = [(str(col), float(target)) for col, target in self.nearest_by]
 
     def validate(self) -> None:
         """
