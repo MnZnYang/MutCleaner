@@ -1,3 +1,4 @@
+from mutcleaner import __version__ as release
 from pathlib import Path
 import sys
 
@@ -7,7 +8,6 @@ sys.path.insert(0, f"{project_root}")
 project = "mutcleaner"
 copyright = "2026, Ziyu Shi, Yuxiang Tang"
 author = "Yuxiang Tang and Ziyu Shi"
-release = "0.4.0"
 
 extensions = [
     "sphinx.ext.autodoc",

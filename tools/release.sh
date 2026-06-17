@@ -33,19 +33,8 @@ git pull --ff-only origin main
 echo "[2/9] Running tests..."
 pytest tests/ -v
 
-if grep -q '^version = ' pyproject.toml; then
-    sed -i -E "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
-else
-    echo "pyproject.toml uses dynamic version; package version will come from tag v$VERSION"
-fi
-
-if grep -q '^__version__ = ' mutcleaner/__init__.py; then
-    sed -i -E "s/^__version__ = \".*\"/__version__ = \"$VERSION\"/" mutcleaner/__init__.py
-fi
-
-if grep -q '^release = ' doc/source/conf.py; then
-    sed -i -E "s/^release = \".*\"/release = \"$VERSION\"/" doc/source/conf.py
-fi
+echo "[3/9] Updating version to $VERSION..."
+sed -i -E "s/^__version__ = \".*\"/__version__ = \"$VERSION\"/" mutcleaner/__init__.py
 
 echo "[4/9] Generating changelog..."
 LAST_TAG=$(git describe --tags --abbrev=0)
@@ -62,7 +51,7 @@ sed -i "s/## \[HEAD\]/## [$VERSION]/" "$CHANGELOG"
 sed -i "s/$LAST_TAG..HEAD/$LAST_TAG..v$VERSION/g" "$CHANGELOG"
 
 echo "[5/9] Committing release changes..."
-git add pyproject.toml mutcleaner/__init__.py doc/source/conf.py "$CHANGELOG"
+git add mutcleaner/__init__.py "$CHANGELOG"
 git commit -m "chore: release v$VERSION"
 
 echo "[6/9] Creating local tag..."
