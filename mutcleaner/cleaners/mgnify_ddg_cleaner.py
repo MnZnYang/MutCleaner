@@ -116,7 +116,7 @@ class MGnifyddGCleanerConfig(BaseCleanerConfig):
 
 def create_mgnify_ddg_cleaner(
     dataset_or_path: Optional[Union[pd.DataFrame, str, Path]] = None,
-    config: Optional[Union[MGnifyCleanerConfig, Dict[str, Any], str, Path]] = None,
+    config: Optional[Union[MGnifyddGCleanerConfig, Dict[str, Any], str, Path]] = None,
 ) -> Pipeline:
     """
     Create MGnify protein stability dataset cleaning pipeline.
