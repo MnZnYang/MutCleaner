@@ -194,7 +194,7 @@ See the [Data Cleaners Usage Guide](https://xulab-research.github.io/MutCleaner/
     </tr>
     <tr>
       <td>MGnify ddG Dataset</td>
-      <td>None</td>
+      <td><a href="https://doi.org/10.64898/2026.05.19.726285">Accurate protein stability prediction for small domains using mega-scale experiments</a></td>
       <td><a href="https://huggingface.co/datasets/xulab-research/MutCleaner/blob/main/MGnify_ddG_Dataset/MGnify_ddG_Dataset.csv">MGnify_ddG_Dataset.csv</a></td>
     </tr>
   </tbody>
