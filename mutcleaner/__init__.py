@@ -5,7 +5,7 @@ MutCleaner: An efficient framework for cleaning, standardizing, and processing b
 
 __author__ = "Yuxiang Tang and Ziyu Shi"
 
-__version__ = "0.4.0"
+__version__ = ""
 
 from .core import (
     # Alphabet
