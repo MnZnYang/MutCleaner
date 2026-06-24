@@ -201,7 +201,6 @@ See the [Data Cleaners Usage Guide](https://xulab-research.github.io/MutCleaner/
 </table>
 
 
-
 ## Core Features
 
 ### Sequence Data Manipulation
